@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalyan Decorators | Elite Event Design & Luxury Decor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#FAF8F5',
+                            card: '#EFECE6',
+                            gold: '#C5A059',
+                            goldDark: '#A6833D',
+                            charcoal: '#2C2C2C',
+                            muted: '#716F6A',
+                            border: '#E2DDD5'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #FAF8F5;
+            color: #2C2C2C;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        h1, h2, h3, h4, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FAF8F5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C5A059;
+            border-radius: 4px;
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-brand-bg text-brand-charcoal antialiased selection:bg-brand-gold selection:text-white">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-brand-charcoal text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 border border-brand-gold/30">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-brand-gold text-xl"></i>
+        <span id="toast-message" class="text-sm font-medium">Notification message</span>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-brand-bg/95 backdrop-blur-md border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#home" onclick="switchView('home')" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-white font-serif text-xl shadow-md group-hover:scale-105 transition-transform">
+                    K
+                </div>
+                <div>
+                    <span class="font-serif text-xl sm:text-2xl font-bold tracking-wide text-brand-charcoal block leading-tight">Kalyan Decorators</span>
+                    <span class="text-[10px] tracking-[0.25em] text-brand-gold uppercase font-semibold block">Luxury Event Design</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <button onclick="switchView('home')" class="nav-link text-sm font-medium tracking-wide text-brand-charcoal hover:text-brand-gold transition-colors pb-1 border-b-2 border-brand-gold" data-target="home">Home</button>
+                <button onclick="switchView('services')" class="nav-link text-sm font-medium tracking-wide text-brand-charcoal hover:text-brand-gold transition-colors pb-1 border-b-2 border-transparent" data-target="services">Services</button>
+                <button onclick="switchView('gallery')" class="nav-link text-sm font-medium tracking-wide text-brand-charcoal hover:text-brand-gold transition-colors pb-1 border-b-2 border-transparent" data-target="gallery">Gallery</button>
+                <button onclick="switchView('catalog')" class="nav-link text-sm font-medium tracking-wide text-brand-charcoal hover:text-brand-gold transition-colors pb-1 border-b-2 border-transparent" data-target="catalog">Decor Catalog</button>
+                <button onclick="switchView('booking')" class="nav-link text-sm font-medium tracking-wide text-brand-charcoal hover:text-brand-gold transition-colors pb-1 border-b-2 border-transparent" data-target="booking">Plan Event</button>
+            </nav>
+
+            <!-- Right Actions: Shortlist Drawer & Admin Switch & Mobile Hamburger -->
+            <div class="flex items-center space-x-4">
+                <!-- Shortlist Button -->
+                <button onclick="toggleShortlistDrawer()" class="relative p-2.5 rounded-full bg-brand-card hover:bg-brand-border text-brand-charcoal transition-colors" title="Event Shortlist">
+                    <i class="fa-solid fa-basket-shopping text-lg"></i>
+                    <span id="shortlist-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-brand-gold text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow">0</span>
+                </button>
+
+                <!-- Admin CMS Toggle -->
+                <button onclick="switchView('admin')" class="hidden sm:flex items-center space-x-2 px-4 py-2 rounded-lg bg-brand-charcoal text-white hover:bg-brand-gold text-xs font-semibold tracking-wider uppercase transition-colors shadow-sm">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Admin CMS</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-lg bg-brand-card text-brand-charcoal">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-bg border-b border-brand-border px-6 py-4 space-y-3 shadow-xl">
+            <button onclick="switchView('home'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Home</button>
+            <button onclick="switchView('services'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Services</button>
+            <button onclick="switchView('gallery'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Gallery</button>
+            <button onclick="switchView('catalog'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Decor Catalog</button>
+            <button onclick="switchView('booking'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Plan Event</button>
+            <button onclick="switchView('admin'); toggleMobileMenu();" class="flex items-center space-x-2 w-full py-2.5 px-4 rounded bg-brand-charcoal text-white font-medium text-sm justify-center">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Admin CMS</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container Views -->
+    <main id="main-content">
+        <!-- HOME VIEW -->
+        <section id="view-home" class="view-section fade-in">
+            <!-- Hero Section -->
+            <div class="relative min-h-[85vh] flex items-center justify-center bg-brand-charcoal text-white overflow-hidden">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=2000&q=80" alt="Luxury Wedding Decor" class="w-full h-full object-cover object-center opacity-40 scale-105 animate-pulse duration-1000">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-charcoal via-brand-charcoal/50 to-transparent"></div>
+                </div>
+                <div class="relative z-10 max-w-5xl mx-auto px-4 text-center py-24">
+                    <span class="inline-block py-1.5 px-4 rounded-full bg-brand-gold/20 border border-brand-gold/50 text-brand-gold text-xs font-semibold tracking-[0.3em] uppercase mb-6 backdrop-blur-sm">
+                        Bespoje Event Architecture & Decor
+                    </span>
+                    <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+                        Timeless Elegance, <br><span class="italic font-normal text-brand-gold">Unforgettable</span> Celebrations
+                    </h1>
+                    <p class="text-base sm:text-xl text-gray-300 max-w-2xl mx-auto font-light mb-10 leading-relaxed">
+                        Transforming extraordinary visions into breathtaking realities. We specialize in luxury weddings, grand milestone birthdays, and exclusive corporate galas.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <button onclick="switchView('gallery')" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-semibold text-sm tracking-wider uppercase transition-all shadow-lg hover:shadow-brand-gold/30">
+                            Explore the Gallery
+                        </button>
+                        <button onclick="switchView('booking')" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 font-semibold text-sm tracking-wider uppercase transition-all">
+                            Plan Your Event
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand Philosophy -->
+            <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-3">The Art of Celebration</span>
+                        <h2 class="font-serif text-3xl sm:text-5xl font-bold text-brand-charcoal mb-6 leading-tight">
+                            Crafting Moments That Linger in Memory Forever
+                        </h2>
+                        <p class="text-brand-muted text-base sm:text-lg leading-relaxed mb-6 font-light">
+                            At Kalyan Decorators, we believe every event is an unfolding story. Founded with a passion for immaculate detailing and grand architectural styling, our team curates immersive environments tailored to your personal aesthetic.
+                        </p>
+                        <div class="grid grid-cols-2 gap-6 pt-4 border-t border-brand-border">
+                            <div>
+                                <span class="font-serif text-4xl font-bold text-brand-gold block mb-1">15+</span>
+                                <span class="text-xs tracking-wider uppercase text-brand-muted font-semibold">Years of Excellence</span>
+                            </div>
+                            <div>
+                                <span class="font-serif text-4xl font-bold text-brand-gold block mb-1">850+</span>
+                                <span class="text-xs tracking-wider uppercase text-brand-muted font-semibold">Events Curated</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <img src="https://images.unsplash.com/photo-1545232979-fbf6e2c3a3b9?auto=format&fit=crop&w=800&q=80" alt="Floral Arrangement" class="w-full h-80 object-cover rounded-2xl shadow-md">
+                        <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80" alt="Table Setting" class="w-full h-80 object-cover rounded-2xl shadow-md mt-8">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Services -->
+            <section class="bg-brand-card py-24 border-y border-brand-border">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-2">Curated Offerings</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal">Our Signature Services</h2>
+                    </div>
+                    <div id="home-services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Selected Portfolio Highlights -->
+            <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-16">
+                    <div>
+                        <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-2">Visual Masterpieces</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal">Selected Portfolio Highlights</h2>
+                    </div>
+                    <button onclick="switchView('gallery')" class="mt-4 md:mt-0 text-sm font-semibold tracking-wider text-brand-charcoal hover:text-brand-gold uppercase flex items-center space-x-2 group">
+                        <span>View Full Gallery</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+                <div id="home-portfolio-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+
+            <!-- Quick Inquiry Banner -->
+            <section class="py-20 bg-brand-charcoal text-white relative overflow-hidden">
+                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#C5A059_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+                    <span class="text-xs font-bold tracking-[0.3em] text-brand-gold uppercase block mb-3">Begin Your Journey</span>
+                    <h2 class="font-serif text-3xl sm:text-5xl font-bold mb-6">Ready to Create Something Extraordinary?</h2>
+                    <p class="text-gray-300 text-base sm:text-lg mb-10 max-w-xl mx-auto font-light">
+                        Let us bring your dream celebration to life with bespoke styling and meticulous execution.
+                    </p>
+                    <button onclick="switchView('booking')" class="px-8 py-4 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-semibold text-sm tracking-wider uppercase transition-all shadow-lg">
+                        Request a Consultation & Quote
+                    </button>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-2">Client Praise</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal">Words From Our Hosts</h2>
+                </div>
+                <div id="testimonials-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+        </section>
+
+        <!-- SERVICES VIEW -->
+        <section id="view-services" class="view-section hidden fade-in py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-2">Comprehensive Event Styling</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-bold text-brand-charcoal mb-4">Our Services & Expertise</h1>
+                    <p class="text-brand-muted text-base sm:text-lg font-light">
+                        From intimate luxury gatherings to grand multi-day royal weddings, discover our specialized decor divisions.
+                    </p>
+                </div>
+                <div id="services-detailed-list" class="space-y-16">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY VIEW -->
+        <section id="view-gallery" class="view-section hidden fade-in py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-2">Visual Showcase</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-bold text-brand-charcoal mb-4">Our Event Gallery</h1>
+                    <p class="text-brand-muted text-base sm:text-lg font-light">
+                        Explore stages, floral masterpieces, dramatic lighting, and exquisite entrance designs.
+                    </p>
+                </div>
+
+                <!-- Gallery Filter Buttons -->
+                <div id="gallery-filters" class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mb-12">
+                    <button onclick="filterGallery('All')" class="gallery-filter-btn active px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-charcoal text-white transition-colors">All Work</button>
+                    <button onclick="filterGallery('Weddings')" class="gallery-filter-btn px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Weddings</button>
+                    <button onclick="filterGallery('Birthdays')" class="gallery-filter-btn px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Birthdays</button>
+                    <button onclick="filterGallery('Stage Designs')" class="gallery-filter-btn px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Stage Designs</button>
+                    <button onclick="filterGallery('Floral')" class="gallery-filter-btn px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Floral</button>
+                    <button onclick="filterGallery('Entrances')" class="gallery-filter-btn px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Entrances</button>
+                </div>
+
+                <!-- Gallery Grid -->
+                <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- DECOR CATALOG VIEW -->
+        <section id="view-catalog" class="view-section hidden fade-in py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-2">Rental & Styling Catalog</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-bold text-brand-charcoal mb-4">Interactive Decor Catalog</h1>
+                    <p class="text-brand-muted text-base sm:text-lg font-light">
+                        Browse our exclusive collection of backdrops, arches, luxury seating, lighting, and table pieces. Add items to your event shortlist for instant quote calculation.
+                    </p>
+                </div>
+
+                <!-- Search and Filters Bar -->
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-10 bg-brand-card p-4 rounded-2xl border border-brand-border">
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted"></i>
+                        <input type="text" id="catalog-search" oninput="renderCatalog()" placeholder="Search decor items..." class="w-full pl-11 pr-4 py-3 rounded-xl bg-white border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                    </div>
+                    <!-- Category Filters -->
+                    <div id="catalog-categories" class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <button onclick="filterCatalog('All')" class="cat-filter-btn active px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-brand-charcoal text-white">All Items</button>
+                        <button onclick="filterCatalog('Backdrops & Arches')" class="cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-white text-brand-charcoal hover:bg-brand-border">Backdrops</button>
+                        <button onclick="filterCatalog('Seating & Lounge')" class="cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-white text-brand-charcoal hover:bg-brand-border">Seating</button>
+                        <button onclick="filterCatalog('Tables & Linens')" class="cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-white text-brand-charcoal hover:bg-brand-border">Tables</button>
+                        <button onclick="filterCatalog('Floral Pieces')" class="cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-white text-brand-charcoal hover:bg-brand-border">Floral</button>
+                        <button onclick="filterCatalog('Lighting & Chandeliers')" class="cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-white text-brand-charcoal hover:bg-brand-border">Lighting</button>
+                        <button onclick="filterCatalog('Stage Props')" class="cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-white text-brand-charcoal hover:bg-brand-border">Props</button>
+                    </div>
+                </div>
+
+                <!-- Catalog Grid -->
+                <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- BOOKING & INQUIRY VIEW -->
+        <section id="view-booking" class="view-section hidden fade-in py-16">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-2">Plan Your Celebration</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-bold text-brand-charcoal mb-4">Event Quote & Inquiry</h1>
+                    <p class="text-brand-muted text-base sm:text-lg font-light">
+                        Fill out the details below. Your selected catalog items and services are automatically included in this inquiry.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-brand-border">
+                    <form id="inquiry-form" onsubmit="handleInquirySubmit(event)" class="space-y-8">
+                        <!-- Personal Info -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Full Name *</label>
+                                <input type="text" id="client-name" required placeholder="e.g. Ananya Sharma" class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Email Address *</label>
+                                <input type="email" id="client-email" required placeholder="ananya@example.com" class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Phone Number *</label>
+                                <input type="tel" id="client-phone" required placeholder="+91 98765 43210" class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Event Type *</label>
+                                <select id="client-event-type" class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                                    <option value="Wedding Decor">Wedding Decor</option>
+                                    <option value="Birthday Celebration">Birthday Celebration</option>
+                                    <option value="Corporate & Private Event">Corporate & Private Event</option>
+                                    <option value="Stage Design & Lighting">Stage Design & Lighting</option>
+                                    <option value="Other Special Event">Other Special Event</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Event Date *</label>
+                                <input type="date" id="client-date" required class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Guest Count *</label>
+                                <input type="number" id="client-guests" required placeholder="e.g. 350" class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Budget Range *</label>
+                                <select id="client-budget" class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                                    <option value="₹1,50,000 - ₹3,00,000">₹1.5 Lakh - ₹3 Lakh</option>
+                                    <option value="₹3,00,000 - ₹7,50,000" selected>₹3 Lakh - ₹7.5 Lakh</option>
+                                    <option value="₹7,50,000 - ₹15,00,000">₹7.5 Lakh - ₹15 Lakh</option>
+                                    <option value="₹15,00,000+">₹15 Lakh+</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Venue / Location *</label>
+                            <input type="text" id="client-venue" required placeholder="e.g. The Leela Palace, Udaipur / Farmhouse, Delhi" class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold">
+                        </div>
+
+                        <!-- Summary of Shortlist inside Booking -->
+                        <div class="p-6 rounded-2xl bg-brand-card border border-brand-border">
+                            <h3 class="font-serif font-bold text-lg text-brand-charcoal mb-3 flex items-center justify-between">
+                                <span>Selected Shortlist Items</span>
+                                <span id="booking-shortlist-count" class="text-xs font-sans bg-brand-gold text-white px-2.5 py-1 rounded-full">0 items</span>
+                            </h3>
+                            <div id="booking-shortlist-summary" class="text-sm text-brand-muted space-y-1 mb-4">
+                                <p class="italic">No items added from catalog yet. You can browse the Decor Catalog anytime.</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-2">Special Vision & Notes</label>
+                            <textarea id="client-notes" rows="4" placeholder="Describe your theme, color palette, or specific floral preferences..." class="w-full px-4 py-3.5 rounded-xl bg-brand-bg border border-brand-border text-sm focus:outline-none focus:border-brand-gold"></textarea>
+                        </div>
+
+                        <div class="pt-4">
+                            <button type="submit" class="w-full py-4 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-semibold text-sm tracking-wider uppercase transition-all shadow-lg flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Submit Quote Request</span>
+                            </button>
+                            <p class="text-center text-xs text-brand-muted mt-4">
+                                Note: Submitting this form sends an inquiry quote request. Our design team will verify date availability and contact you within 24 hours.
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN / CMS VIEW -->
+        <section id="view-admin" class="view-section hidden fade-in py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Admin Header & Security Check -->
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 pb-6 border-b border-brand-border gap-4">
+                    <div>
+                        <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-1">Content Management System</span>
+                        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal">Kalyan Decorators Admin Portal</h1>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="resetDataToDefault()" class="px-4 py-2.5 rounded-xl bg-brand-card hover:bg-brand-border text-xs font-semibold tracking-wider text-brand-charcoal uppercase transition-colors">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Reset Default Data
+                        </button>
+                        <button onclick="switchView('home')" class="px-4 py-2.5 rounded-xl bg-brand-charcoal text-white text-xs font-semibold tracking-wider uppercase transition-colors">
+                            <i class="fa-solid fa-eye mr-1"></i> View Live Site
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Tabs Navigation -->
+                <div class="flex flex-wrap gap-2 mb-8 border-b border-brand-border pb-4">
+                    <button onclick="switchAdminTab('portfolio')" class="admin-tab-btn active px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-charcoal text-white transition-colors">Portfolio Manager</button>
+                    <button onclick="switchAdminTab('catalog')" class="admin-tab-btn px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Catalog Manager</button>
+                    <button onclick="switchAdminTab('services')" class="admin-tab-btn px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Services & Reviews</button>
+                    <button onclick="switchAdminTab('leads')" class="admin-tab-btn px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors relative">
+                        Client Inquiries <span id="leads-count-badge" class="ml-1.5 bg-brand-gold text-white px-1.5 py-0.5 rounded-full text-[10px]">0</span>
+                    </button>
+                </div>
+
+                <!-- Admin Tab 1: Portfolio Manager -->
+                <div id="admin-tab-portfolio" class="admin-pane space-y-8">
+                    <div class="flex justify-between items-center bg-brand-card p-6 rounded-2xl border border-brand-border">
+                        <div>
+                            <h2 class="font-serif text-xl font-bold text-brand-charcoal">Manage Gallery Portfolio</h2>
+                            <p class="text-sm text-brand-muted">Add, edit, or remove projects displayed in the public gallery.</p>
+                        </div>
+                        <button onclick="openPortfolioModal()" class="px-5 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white text-xs font-semibold tracking-wider uppercase transition-colors shadow">
+                            <i class="fa-solid fa-plus mr-1"></i> Add New Project
+                        </button>
+                    </div>
+                    <div id="admin-portfolio-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Admin Tab 2: Catalog Manager -->
+                <div id="admin-tab-catalog" class="admin-pane hidden space-y-8">
+                    <div class="flex justify-between items-center bg-brand-card p-6 rounded-2xl border border-brand-border">
+                        <div>
+                            <h2 class="font-serif text-xl font-bold text-brand-charcoal">Manage Decor Rental Catalog</h2>
+                            <p class="text-sm text-brand-muted">Add new rental items, update pricing, or remove old inventory.</p>
+                        </div>
+                        <button onclick="openCatalogModal()" class="px-5 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white text-xs font-semibold tracking-wider uppercase transition-colors shadow">
+                            <i class="fa-solid fa-plus mr-1"></i> Add Decor Item
+                        </button>
+                    </div>
+                    <div id="admin-catalog-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Admin Tab 3: Services & Testimonials -->
+                <div id="admin-tab-services" class="admin-pane hidden space-y-12">
+                    <!-- Services Editor -->
+                    <div class="bg-brand-card p-6 rounded-2xl border border-brand-border">
+                        <h2 class="font-serif text-xl font-bold text-brand-charcoal mb-4">Manage Core Services</h2>
+                        <div id="admin-services-list" class="space-y-6">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Testimonials Editor -->
+                    <div class="bg-brand-card p-6 rounded-2xl border border-brand-border">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="font-serif text-xl font-bold text-brand-charcoal">Manage Client Testimonials</h2>
+                            <button onclick="openTestimonialModal()" class="px-4 py-2.5 rounded-xl bg-brand-gold text-white text-xs font-semibold uppercase">Add Testimonial</button>
+                        </div>
+                        <div id="admin-testimonials-list" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 4: Leads & Inquiries -->
+                <div id="admin-tab-leads" class="admin-pane hidden space-y-6">
+                    <div class="bg-brand-card p-6 rounded-2xl border border-brand-border">
+                        <h2 class="font-serif text-xl font-bold text-brand-charcoal mb-2">Client Inquiry Leads</h2>
+                        <p class="text-sm text-brand-muted">Review incoming quote requests submitted by prospective clients.</p>
+                    </div>
+                    <div id="admin-leads-list" class="space-y-4">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-charcoal text-white pt-16 pb-12 border-t border-brand-gold/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center text-white font-serif font-bold">K</div>
+                    <span class="font-serif text-xl font-bold tracking-wide">Kalyan Decorators</span>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed font-light">
+                    Elite event design and luxury floral architecture crafting unforgettable milestone celebrations.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold text-brand-gold mb-4 text-sm tracking-wider uppercase">Quick Links</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><button onclick="switchView('home')" class="hover:text-brand-gold transition-colors">Home</button></li>
+                    <li><button onclick="switchView('services')" class="hover:text-brand-gold transition-colors">Services</button></li>
+                    <li><button onclick="switchView('gallery')" class="hover:text-brand-gold transition-colors">Gallery</button></li>
+                    <li><button onclick="switchView('catalog')" class="hover:text-brand-gold transition-colors">Decor Catalog</button></li>
+                    <li><button onclick="switchView('booking')" class="hover:text-brand-gold transition-colors">Plan Your Event</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold text-brand-gold mb-4 text-sm tracking-wider uppercase">Services</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li>Wedding Decor & Styling</li>
+                    <li>Birthday Celebrations</li>
+                    <li>Corporate & Private Events</li>
+                    <li>Stage Design & Lighting</li>
+                    <li>Floral Architecture</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold text-brand-gold mb-4 text-sm tracking-wider uppercase">Contact Studio</h4>
+                <ul class="space-y-3 text-sm text-gray-300">
+                    <li class="flex items-start space-x-3">
+                        <i class="fa-solid fa-location-dot text-brand-gold mt-1"></i>
+                        <span>Kalyan Decor Studio, Golf Course Road, Sector 54, Gurgaon, India</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <i class="fa-solid fa-phone text-brand-gold"></i>
+                        <span>+91 98112 45678</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <i class="fa-solid fa-envelope text-brand-gold"></i>
+                        <span>concierge@kalyandecorators.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
+            <p>&copy; 2026 Kalyan Decorators. All rights reserved. Crafted with elegance.</p>
+            <div class="flex space-x-6 mt-4 sm:mt-0">
+                <a href="#" class="hover:text-brand-gold transition-colors"><i class="fa-brands fa-instagram text-lg"></i></a>
+                <a href="#" class="hover:text-brand-gold transition-colors"><i class="fa-brands fa-pinterest text-lg"></i></a>
+                <a href="#" class="hover:text-brand-gold transition-colors"><i class="fa-brands fa-facebook text-lg"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shortlist Drawer -->
+    <div id="shortlist-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-brand-charcoal/60 backdrop-blur-sm transition-opacity" onclick="toggleShortlistDrawer()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <div class="p-6 bg-brand-charcoal text-white flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-basket-shopping text-brand-gold text-xl"></i>
+                        <h3 class="font-serif font-bold text-xl">Event Shortlist</h3>
+                    </div>
+                    <button onclick="toggleShortlistDrawer()" class="p-2 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div id="shortlist-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Dynamically populated shortlist items -->
+                </div>
+                <div class="p-6 bg-brand-card border-t border-brand-border space-y-4">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-brand-muted">Estimated Total Items:</span>
+                        <span id="shortlist-total-count" class="font-bold text-brand-charcoal">0 items</span>
+                    </div>
+                    <button onclick="proceedToBookingFromShortlist()" class="w-full py-3.5 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-semibold text-xs tracking-wider uppercase transition-colors shadow">
+                        Request Shortlist Quote
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Lightbox Modal -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 bg-brand-charcoal/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="relative max-w-5xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
+            <button onclick="closeLightbox()" class="absolute top-4 right-4 z-10 p-3 rounded-full bg-brand-charcoal/70 text-white hover:bg-brand-charcoal">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="md:w-3/5 bg-black flex items-center justify-center">
+                <img id="lightbox-img" src="" alt="Gallery Preview" class="max-h-[80vh] w-full object-cover">
+            </div>
+            <div class="md:w-2/5 p-8 flex flex-col justify-between">
+                <div>
+                    <span id="lightbox-category" class="text-xs font-semibold uppercase tracking-wider text-brand-gold block mb-2">Category</span>
+                    <h3 id="lightbox-title" class="font-serif text-2xl font-bold text-brand-charcoal mb-4">Project Title</h3>
+                    <p id="lightbox-desc" class="text-brand-muted text-sm leading-relaxed mb-6">Description goes here.</p>
+                </div>
+                <button onclick="closeLightbox(); switchView('booking');" class="w-full py-3.5 rounded-xl bg-brand-gold text-white text-xs font-semibold tracking-wider uppercase hover:bg-brand-goldDark transition-colors">
+                    Inquire About This Design
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 z-50 bg-brand-charcoal/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl border border-brand-border space-y-6">
+            <div class="w-20 h-20 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="font-serif text-2xl font-bold text-brand-charcoal">Inquiry Submitted Successfully!</h3>
+            <p class="text-sm text-brand-muted leading-relaxed">
+                Thank you for choosing Kalyan Decorators. Our senior event consultant has received your inquiry and shortlist. We will review date availability and contact you within 24 hours.
+            </p>
+            <button onclick="closeSuccessModal()" class="w-full py-3.5 rounded-xl bg-brand-gold text-white text-xs font-semibold tracking-wider uppercase hover:bg-brand-goldDark transition-colors">
+                Back to Home
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Portfolio Modal (CRUD) -->
+    <div id="admin-portfolio-modal" class="fixed inset-0 z-50 bg-brand-charcoal/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border border-brand-border">
+            <h3 id="portfolio-modal-title" class="font-serif text-2xl font-bold text-brand-charcoal mb-6">Add New Project</h3>
+            <form id="portfolio-form" onsubmit="savePortfolioProject(event)" class="space-y-4">
+                <input type="hidden" id="portfolio-id">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Project Title</label>
+                    <input type="text" id="p-title" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Category</label>
+                    <select id="p-category" class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
+                        <option value="Weddings">Weddings</option>
+                        <option value="Birthdays">Birthdays</option>
+                        <option value="Stage Designs">Stage Designs</option>
+                        <option value="Floral">Floral</option>
+                        <option value="Entrances">Entrances</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Image URL (Unsplash or direct)</label>
+                    <input type="url" id="p-image" required placeholder="https://images.unsplash.com/..." class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Description</label>
+                    <textarea id="p-desc" rows="3" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm"></textarea>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closePortfolioModal()" class="w-1/2 py-3 rounded-xl bg-brand-card text-brand-charcoal text-xs font-semibold uppercase">Cancel</button>
+                    <button type="submit" class="w-1/2 py-3 rounded-xl bg-brand-gold text-white text-xs font-semibold uppercase">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Catalog Modal (CRUD) -->
+    <div id="admin-catalog-modal" class="fixed inset-0 z-50 bg-brand-charcoal/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border border-brand-border">
+            <h3 id="catalog-modal-title" class="font-serif text-2xl font-bold text-brand-charcoal mb-6">Add Decor Item</h3>
+            <form id="catalog-form" onsubmit="saveCatalogItem(event)" class="space-y-4">
+                <input type="hidden" id="catalog-item-id">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Item Name</label>
+                    <input type="text" id="c-name" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Category</label>
+                    <select id="c-category" class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
+                        <option value="Backdrops & Arches">Backdrops & Arches</option>
+                        <option value="Seating & Lounge">Seating & Lounge</option>
+                        <option value="Tables & Linens">Tables & Linens</option>
+                        <option value="Floral Pieces">Floral Pieces</option>
+                        <option value="Lighting & Chandeliers">Lighting & Chandeliers</option>
+                        <option value="Stage Props">Stage Props</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Price (e.g. ₹25,000 or Request price)</label>
+                    <input type="text" id="c-price" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Image URL</label>
+                    <input type="url" id="c-image" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Description</label>
+                    <textarea id="c-desc" rows="3" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm"></textarea>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeCatalogModal()" class="w-1/2 py-3 rounded-xl bg-brand-card text-brand-charcoal text-xs font-semibold uppercase">Cancel</button>
+                    <button type="submit" class="w-1/2 py-3 rounded-xl bg-brand-gold text-white text-xs font-semibold uppercase">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Default Data Store
+        const defaultPortfolio = [
+            { id: 1, title: "Royal Palace Mandap", category: "Weddings", image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", desc: "Traditional ivory and gold mandap adorned with 50,000 fresh tuberose and hanging crystal chandeliers." },
+            { id: 2, title: "Boho Chic 30th Birthday", category: "Birthdays", image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80", desc: "Pampas grass arrangements, ambient fairy light canopy, and custom neon signage." },
+            { id: 3, title: "Grand Crystal Reception Stage", category: "Stage Designs", image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=800&q=80", desc: "Mirror-top stage framed with cascading orchid waterfalls and warm pin-spot lighting." },
+            { id: 4, title: "Enchanted Floral Tunnel Entrance", category: "Entrances", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=800&q=80", desc: "Immersive garden walkway featuring 360-degree pink roses, hydrangeas, and glowing lanterns." },
+            { id: 5, title: "Vibrant Sangeet Mehendi Lounge", category: "Weddings", image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80", desc: "Vibrant Rajasthani block-print cushions, Moroccan lanterns, and marigold strings." },
+            { id: 6, title: "Pastel Dream Floral Cloud", category: "Floral", image: "https://images.unsplash.com/photo-1545232979-fbf6e2c3a3b9?auto=format&fit=crop&w=800&q=80", desc: "Suspended ceiling floral installation featuring cascading baby's breath and blush roses." }
+        ];
+
+        const defaultCatalog = [
+            { id: 101, name: "Gold Geometric Arch Backdrop", category: "Backdrops & Arches", price: "₹35,000", image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", desc: "Modern geometric metal arch with brushed gold finish, customizable with florals." },
+            { id: 102, name: "Victorian Velvet Luxury Sofa", category: "Seating & Lounge", price: "₹18,000", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80", desc: "Deep emerald velvet sofa with curved back and gold trim, perfect for couple seating." },
+            { id: 103, name: "Mirrored Banquet Dining Table", category: "Tables & Linens", price: "₹22,000", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80", desc: "Reflective mirror-top table paired with ghost chairs and bespoke linen runners." },
+            { id: 104, name: "Cascading Orchids & Roses Centerpiece", category: "Floral Pieces", price: "₹8,500", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80", desc: "Luxurious table centerpiece featuring white Phalaenopsis orchids and imported roses." },
+            { id: 105, name: "Boho Rattan Peacock Chair", category: "Seating & Lounge", price: "₹6,000", image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80", desc: "Hand-woven natural rattan peacock chair ideal for mehendi or boho birthday shoots." },
+            { id: 106, name: "Crystal Tiered Chandelier", category: "Lighting & Chandeliers", price: "₹15,000", image: "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=800&q=80", desc: "Magnificent 5-tier crystal chandelier providing warm, glamorous ambient glow." },
+            { id: 107, name: "Floral Moon Gate Arch", category: "Backdrops & Arches", price: "₹45,000", image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", desc: "Full circular floral moon gate packed with lush hydrangeas and eucalyptus." },
+            { id: 108, name: "Vintage Brass Candelabras (Set of 3)", category: "Stage Props", price: "₹4,500", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80", desc: "Antique brass candle stands for romantic candlelit dinner setups." }
+        ];
+
+        const defaultServices = [
+            {
+                id: 1,
+                title: "Wedding Decor & Royal Styling",
+                subtitle: "Bespoke Mandaps, Reception Stages, and Immersive Themes",
+                desc: "We curate legendary weddings with meticulous attention to detail. From the Haldi ceremony to the grand reception, every ritual is bathed in bespoke elegance.",
+                included: ["Custom 3D Concept Design", "Mandap & Stage Architecture", "Premium Floral Styling", "Draping & Fabric Selection", "Lighting & Pin-spotting", "On-site Execution & Styling Team"],
+                image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 2,
+                title: "Birthday Celebrations & Milestone Parties",
+                subtitle: "Immersive Themed Environments & Photo Backdrops",
+                desc: "Celebrate milestone birthdays, anniversaries, and baby showers with jaw-dropping backdrops, balloons, custom neon signs, and luxury tablescapes.",
+                included: ["Custom Thematic Concepts", "Balloon Art & Installations", "Personalized Neon & Acrylic Signage", "Dessert Table Styling", "Lounge Seating & Lighting"],
+                image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 3,
+                title: "Corporate Events & Private Galas",
+                subtitle: "Sophisticated Branding, Product Launches, & Awards Nights",
+                desc: "Elevate your corporate identity with sophisticated, polished stage designs, branded photo walls, and executive gala setups that impress stakeholders.",
+                included: ["Branded Stage & Backdrop Design", "Professional AV Integrated Lighting", "Executive Lounge Furniture", "Floral Centerpieces & Podiums"],
+                image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 4,
+                title: "Stage Design & Lighting Architecture",
+                subtitle: "Theatrical Illumination and Breathtaking Centerpieces",
+                desc: "Lighting is the soul of decor. Our lighting engineers and stage designers craft magical atmospheres using warm ambiance, chandeliers, and pin-spots.",
+                included: ["Architectural Uplighting", "Hanging Chandelier Installations", "Custom Stage Fabrication", "Fairy Light Canopies", "Spotlight Management"],
+                image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=800&q=80"
+            }
+        ];
+
+        const defaultTestimonials = [
+            { id: 1, name: "Rohan & Meera Kapoor", event: "Royal Wedding, Udaipur", quote: "Kalyan Decorators turned our palace wedding into an absolute fairy tale. The mandap design left all 400 guests speechless!", rating: 5 },
+            { id: 2, name: "Pooja Singhania", event: "50th Milestone Birthday", quote: "The floral cloud and boho seating created the most Instagram-worthy celebration. Professional, punctual, and pristine execution.", rating: 5 },
+            { id: 3, name: "Vikram Malhotra", event: "Annual Corporate Gala, Delhi", quote: "Exceptional taste and seamless coordination. Their stage design and lighting elevated our brand gala to international standards.", rating: 5 }
+        ];
+
+        // LocalStorage Initialization
+        function getStore(key, fallback) {
+            const data = localStorage.getItem('kalyan_' + key);
+            return data ? JSON.parse(data) : fallback;
+        }
+
+        function setStore(key, val) {
+            localStorage.setItem('kalyan_' + key, JSON.stringify(val));
+        }
+
+        let portfolio = getStore('portfolio', defaultPortfolio);
+        let catalog = getStore('catalog', defaultCatalog);
+        let services = getStore('services', defaultServices);
+        let testimonials = getStore('testimonials', defaultTestimonials);
+        let inquiries = getStore('inquiries', []);
+        let shortlist = getStore('shortlist', []);
+
+        function resetDataToDefault() {
+            localStorage.removeItem('kalyan_portfolio');
+            localStorage.removeItem('kalyan_catalog');
+            localStorage.removeItem('kalyan_services');
+            localStorage.removeItem('kalyan_testimonials');
+            localStorage.removeItem('kalyan_inquiries');
+            localStorage.removeItem('kalyan_shortlist');
+            portfolio = [...defaultPortfolio];
+            catalog = [...defaultCatalog];
+            services = [...defaultServices];
+            testimonials = [...defaultTestimonials];
+            inquiries = [];
+            shortlist = [];
+            initApp();
+            showToast('System data reset to default successfully!', 'success');
+        }
+
+        // Navigation Controller
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById('view-' + viewId);
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Update Nav Active state
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                if (btn.dataset.target === viewId) {
+                    btn.classList.add('border-brand-gold', 'text-brand-gold');
+                    btn.classList.remove('border-transparent');
+                } else {
+                    btn.classList.remove('border-brand-gold', 'text-brand-gold');
+                    btn.classList.add('border-transparent');
+                }
+            });
+
+            if (viewId === 'admin') {
+                renderAdminData();
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Toast Notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            const iconEl = document.getElementById('toast-icon');
+            msgEl.textContent = message;
+            if (type === 'success') {
+                iconEl.className = 'fa-solid fa-circle-check text-brand-gold text-xl';
+            } else {
+                iconEl.className = 'fa-solid fa-circle-exclamation text-amber-500 text-xl';
+            }
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3500);
+        }
+
+        // Initialization
+        function initApp() {
+            renderHomeServices();
+            renderHomePortfolio();
+            renderTestimonials();
+            renderServicesList();
+            renderGallery('All');
+            renderCatalog();
+            updateShortlistUI();
+        }
+
+        // Home View Renderers
+        function renderHomeServices() {
+            const container = document.getElementById('home-services-grid');
+            container.innerHTML = services.slice(0, 4).map(s => `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-border flex flex-col justify-between group hover:shadow-md transition-shadow">
+                    <div>
+                        <div class="h-48 overflow-hidden">
+                            <img src="${s.image}" alt="${s.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-serif text-xl font-bold text-brand-charcoal mb-2">${s.title}</h3>
+                            <p class="text-brand-muted text-xs leading-relaxed line-clamp-3">${s.desc}</p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <button onclick="switchView('services')" class="text-xs font-semibold uppercase tracking-wider text-brand-gold hover:text-brand-goldDark flex items-center space-x-1">
+                            <span>Explore Details</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderHomePortfolio() {
+            const container = document.getElementById('home-portfolio-grid');
+            container.innerHTML = portfolio.slice(0, 3).map(p => `
+                <div onclick="openLightbox(${p.id})" class="group cursor-pointer relative rounded-2xl overflow-hidden shadow-sm aspect-[4/3]">
+                    <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-charcoal/90 via-brand-charcoal/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6 text-white">
+                        <span class="text-[10px] font-semibold uppercase tracking-widest text-brand-gold mb-1">${p.category}</span>
+                        <h4 class="font-serif text-lg font-bold">${p.title}</h4>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTestimonials() {
+            const container = document.getElementById('testimonials-grid');
+            container.innerHTML = testimonials.map(t => `
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-brand-border flex flex-col justify-between">
+                    <div>
+                        <div class="flex text-brand-gold space-x-1 mb-4 text-xs">
+                            ${'<i class="fa-solid fa-star"></i>'.repeat(t.rating)}
+                        </div>
+                        <p class="font-serif text-brand-charcoal text-base italic leading-relaxed mb-6">"${t.quote}"</p>
+                    </div>
+                    <div>
+                        <h4 class="font-serif font-bold text-brand-charcoal">${t.name}</h4>
+                        <span class="text-xs text-brand-muted uppercase tracking-wider">${t.event}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Services View Renderers
+        function renderServicesList() {
+            const container = document.getElementById('services-detailed-list');
+            container.innerHTML = services.map((s, idx) => `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''}">
+                    <div class="${idx % 2 === 1 ? 'lg:order-2' : ''}">
+                        <img src="${s.image}" alt="${s.title}" class="w-full h-[400px] object-cover rounded-3xl shadow-lg">
+                    </div>
+                    <div class="${idx % 2 === 1 ? 'lg:order-1' : ''} space-y-6">
+                        <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block">Service Division</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal">${s.title}</h2>
+                        <p class="text-brand-muted text-base leading-relaxed font-light">${s.desc}</p>
+                        <div>
+                            <h4 class="font-serif font-bold text-brand-charcoal mb-3">What's Included:</h4>
+                            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-brand-muted">
+                                ${s.included.map(inc => `<li class="flex items-center space-x-2"><i class="fa-solid fa-check text-brand-gold text-xs"></i><span>${inc}</span></li>`).join('')}
+                            </ul>
+                        </div>
+                        <button onclick="prepareInquiryWithService('${s.title}')" class="px-6 py-3.5 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white text-xs font-semibold tracking-wider uppercase transition-all shadow">
+                            Request a Quote for This Service
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function prepareInquiryWithService(serviceTitle) {
+            switchView('booking');
+            document.getElementById('client-event-type').value = serviceTitle;
+            showToast(`Pre-selected service: ${serviceTitle}`);
+        }
+
+        // Gallery View & Lightbox
+        function filterGallery(category) {
+            document.querySelectorAll('.gallery-filter-btn').forEach(btn => {
+                if (btn.textContent.trim().toLowerCase() === category.toLowerCase() || (category === 'All' && btn.textContent.trim().includes('All'))) {
+                    btn.className = 'gallery-filter-btn active px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-charcoal text-white transition-colors';
+                } else {
+                    btn.className = 'gallery-filter-btn px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors';
+                }
+            });
+
+            const grid = document.getElementById('gallery-grid');
+            const filtered = category === 'All' ? portfolio : portfolio.filter(p => p.category.toLowerCase() === category.toLowerCase());
+
+            grid.innerHTML = filtered.map(p => `
+                <div onclick="openLightbox(${p.id})" class="group cursor-pointer relative rounded-2xl overflow-hidden shadow-sm aspect-[4/3] bg-brand-card">
+                    <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-charcoal/90 via-brand-charcoal/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6 text-white">
+                        <span class="text-[10px] font-semibold uppercase tracking-widest text-brand-gold mb-1">${p.category}</span>
+                        <h4 class="font-serif text-lg font-bold">${p.title}</h4>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGallery(cat) {
+            filterGallery(cat);
+        }
+
+        function openLightbox(id) {
+            const item = portfolio.find(p => p.id === id);
+            if (!item) return;
+            document.getElementById('lightbox-img').src = item.image;
+            document.getElementById('lightbox-category').textContent = item.category;
+            document.getElementById('lightbox-title').textContent = item.title;
+            document.getElementById('lightbox-desc').textContent = item.desc;
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+        }
+
+        // Decor Catalog & Shortlist
+        let currentCatalogCategory = 'All';
+
+        function filterCatalog(category) {
+            currentCatalogCategory = category;
+            document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                if (btn.textContent.trim().toLowerCase() === category.toLowerCase() || (category === 'All' && btn.textContent.trim().includes('All'))) {
+                    btn.className = 'cat-filter-btn active px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-brand-charcoal text-white';
+                } else {
+                    btn.className = 'cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold uppercase bg-white text-brand-charcoal hover:bg-brand-border';
+                }
+            });
+            renderCatalog();
+        }
+
+        function renderCatalog() {
+            const query = document.getElementById('catalog-search').value.toLowerCase();
+            const grid = document.getElementById('catalog-grid');
+
+            let filtered = catalog.filter(item => {
+                const matchesCat = currentCatalogCategory === 'All' || item.category === currentCatalogCategory;
+                const matchesSearch = item.name.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query);
+                return matchesCat && matchesSearch;
+            });
+
+            grid.innerHTML = filtered.map(item => {
+                const isInShortlist = shortlist.some(s => s.id === item.id);
+                return `
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-border flex flex-col justify-between">
+                        <div>
+                            <div class="h-56 overflow-hidden relative">
+                                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                                <span class="absolute top-4 left-4 bg-brand-charcoal/80 backdrop-blur-sm text-white text-[10px] font-semibold tracking-wider uppercase px-3 py-1 rounded-full">${item.category}</span>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-serif font-bold text-lg text-brand-charcoal">${item.name}</h3>
+                                    <span class="text-brand-gold font-bold text-sm">${item.price}</span>
+                                </div>
+                                <p class="text-brand-muted text-xs leading-relaxed mb-4">${item.desc}</p>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <button onclick="toggleShortlist(${item.id})" class="w-full py-3 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-center space-x-2 ${isInShortlist ? 'bg-brand-charcoal text-white' : 'bg-brand-card hover:bg-brand-border text-brand-charcoal'}">
+                                <i class="fa-solid ${isInShortlist ? 'fa-check text-brand-gold' : 'fa-plus'}"></i>
+                                <span>${isInShortlist ? 'Added to Shortlist' : 'Add to Shortlist'}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleShortlist(id) {
+            const item = catalog.find(c => c.id === id);
+            if (!item) return;
+            const index = shortlist.findIndex(s => s.id === id);
+            if (index > -1) {
+                shortlist.splice(index, 1);
+                showToast(`Removed "${item.name}" from shortlist`, 'error');
+            } else {
+                shortlist.push({ ...item, qty: 1 });
+                showToast(`Added "${item.name}" to shortlist!`);
+            }
+            setStore('shortlist', shortlist);
+            updateShortlistUI();
+            renderCatalog();
+        }
+
+        function updateShortlistUI() {
+            const badge = document.getElementById('shortlist-badge');
+            const totalCount = shortlist.reduce((acc, item) => acc + item.qty, 0);
+            badge.textContent = totalCount;
+
+            const container = document.getElementById('shortlist-items-container');
+            const bookingSummary = document.getElementById('booking-shortlist-summary');
+            const bookingBadge = document.getElementById('booking-shortlist-count');
+
+            bookingBadge.textContent = `${totalCount} items`;
+
+            if (shortlist.length === 0) {
+                container.innerHTML = `<p class="text-sm text-brand-muted text-center py-12">Your shortlist is currently empty. Browse the Decor Catalog to add rental items.</p>`;
+                bookingSummary.innerHTML = `<p class="italic text-sm text-brand-muted">No items selected from catalog yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = shortlist.map(item => `
+                <div class="flex items-center justify-between p-4 bg-brand-card rounded-xl border border-brand-border">
+                    <div class="flex items-center space-x-3">
+                        <img src="${item.image}" alt="${item.name}" class="w-14 h-14 object-cover rounded-lg">
+                        <div>
+                            <h4 class="font-serif font-bold text-sm text-brand-charcoal">${item.name}</h4>
+                            <span class="text-xs text-brand-gold font-bold">${item.price}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="updateQty(${item.id}, -1)" class="w-7 h-7 bg-white rounded-md border border-brand-border flex items-center justify-center text-xs font-bold">-</button>
+                        <span class="text-xs font-bold w-5 text-center">${item.qty}</span>
+                        <button onclick="updateQty(${item.id}, 1)" class="w-7 h-7 bg-white rounded-md border border-brand-border flex items-center justify-center text-xs font-bold">+</button>
+                        <button onclick="removeFromShortlist(${item.id})" class="ml-2 text-brand-muted hover:text-red-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>
+                </div>
+            `).join('');
+
+            bookingSummary.innerHTML = shortlist.map(item => `
+                <div class="flex justify-between text-sm py-1 border-b border-brand-border/50">
+                    <span>${item.name} (Qty: ${item.qty})</span>
+                    <span class="font-semibold text-brand-gold">${item.price}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateQty(id, delta) {
+            const item = shortlist.find(s => s.id === id);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                shortlist = shortlist.filter(s => s.id !== id);
+            }
+            setStore('shortlist', shortlist);
+            updateShortlistUI();
+            renderCatalog();
+        }
+
+        function removeFromShortlist(id) {
+            shortlist = shortlist.filter(s => s.id !== id);
+            setStore('shortlist', shortlist);
+            updateShortlistUI();
+            renderCatalog();
+        }
+
+        function toggleShortlistDrawer() {
+            const drawer = document.getElementById('shortlist-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        function proceedToBookingFromShortlist() {
+            toggleShortlistDrawer();
+            switchView('booking');
+        }
+
+        // Booking Form Submission
+        function handleInquirySubmit(event) {
+            event.preventDefault();
+            const newInquiry = {
+                id: Date.now(),
+                name: document.getElementById('client-name').value,
+                email: document.getElementById('client-email').value,
+                phone: document.getElementById('client-phone').value,
+                eventType: document.getElementById('client-event-type').value,
+                date: document.getElementById('client-date').value,
+                guests: document.getElementById('client-guests').value,
+                budget: document.getElementById('client-budget').value,
+                venue: document.getElementById('client-venue').value,
+                notes: document.getElementById('client-notes').value,
+                shortlist: [...shortlist],
+                status: 'New',
+                createdAt: new Date().toLocaleDateString()
+            };
+
+            inquiries.unshift(newInquiry);
+            setStore('inquiries', inquiries);
+
+            // Reset form and shortlist
+            document.getElementById('inquiry-form').reset();
+            shortlist = [];
+            setStore('shortlist', shortlist);
+            updateShortlistUI();
+
+            // Show Success Modal
+            document.getElementById('success-modal').classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            switchView('home');
+        }
+
+        // Admin CMS Controller
+        function switchAdminTab(tabName) {
+            document.querySelectorAll('.admin-pane').forEach(pane => pane.classList.add('hidden'));
+            document.getElementById('admin-tab-' + tabName).classList.remove('hidden');
+
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(tabName.toLowerCase()) || (tabName === 'leads' && btn.textContent.toLowerCase().includes('inquiries'))) {
+                    btn.className = 'admin-tab-btn active px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-charcoal text-white transition-colors';
+                } else {
+                    btn.className = 'admin-tab-btn px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors';
+                }
+            });
+            renderAdminData();
+        }
+
+        function renderAdminData() {
+            // Update Leads Badge
+            document.getElementById('leads-count-badge').textContent = inquiries.length;
+
+            // Render Admin Portfolio
+            const portfolioContainer = document.getElementById('admin-portfolio-list');
+            portfolioContainer.innerHTML = portfolio.map(p => `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-border flex flex-col justify-between">
+                    <div>
+                        <div class="h-40 overflow-hidden relative">
+                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover">
+                            <span class="absolute top-2 left-2 bg-brand-charcoal text-white text-[10px] font-semibold px-2 py-0.5 rounded">${p.category}</span>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-serif font-bold text-base text-brand-charcoal mb-1">${p.title}</h4>
+                            <p class="text-brand-muted text-xs line-clamp-2">${p.desc}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-end space-x-2">
+                        <button onclick="editPortfolioProject(${p.id})" class="px-3 py-1.5 rounded bg-brand-card text-brand-charcoal text-xs font-semibold">Edit</button>
+                        <button onclick="deletePortfolioProject(${p.id})" class="px-3 py-1.5 rounded bg-red-50 text-red-600 text-xs font-semibold">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Admin Catalog
+            const catalogContainer = document.getElementById('admin-catalog-list');
+            catalogContainer.innerHTML = catalog.map(c => `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-border flex flex-col justify-between">
+                    <div>
+                        <div class="h-40 overflow-hidden relative">
+                            <img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover">
+                            <span class="absolute top-2 left-2 bg-brand-charcoal text-white text-[10px] font-semibold px-2 py-0.5 rounded">${c.category}</span>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-serif font-bold text-base text-brand-charcoal">${c.name}</h4>
+                                <span class="text-brand-gold font-bold text-xs">${c.price}</span>
+                            </div>
+                            <p class="text-brand-muted text-xs line-clamp-2">${c.desc}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-end space-x-2">
+                        <button onclick="editCatalogItem(${c.id})" class="px-3 py-1.5 rounded bg-brand-card text-brand-charcoal text-xs font-semibold">Edit</button>
+                        <button onclick="deleteCatalogItem(${c.id})" class="px-3 py-1.5 rounded bg-red-50 text-red-600 text-xs font-semibold">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Admin Services
+            const servicesContainer = document.getElementById('admin-services-list');
+            servicesContainer.innerHTML = services.map(s => `
+                <div class="p-4 bg-white rounded-xl border border-brand-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <img src="${s.image}" alt="${s.title}" class="w-16 h-16 object-cover rounded-lg">
+                        <div>
+                            <h4 class="font-serif font-bold text-base text-brand-charcoal">${s.title}</h4>
+                            <p class="text-brand-muted text-xs">${s.subtitle}</p>
+                        </div>
+                    </div>
+                    <button onclick="editService(${s.id})" class="px-4 py-2 rounded-lg bg-brand-card hover:bg-brand-border text-xs font-semibold">Edit Details</button>
+                </div>
+            `).join('');
+
+            // Render Admin Testimonials
+            const testContainer = document.getElementById('admin-testimonials-list');
+            testContainer.innerHTML = testimonials.map(t => `
+                <div class="bg-white p-4 rounded-xl border border-brand-border flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-serif font-bold text-sm text-brand-charcoal">${t.name}</h4>
+                        <span class="text-[10px] text-brand-gold uppercase">${t.event}</span>
+                        <p class="text-xs text-brand-muted italic mt-2">"${t.quote}"</p>
+                    </div>
+                    <button onclick="deleteTestimonial(${t.id})" class="mt-4 text-red-600 text-xs font-semibold text-left">Remove</button>
+                </div>
+            `).join('');
+
+            // Render Admin Leads
+            const leadsContainer = document.getElementById('admin-leads-list');
+            if (inquiries.length === 0) {
+                leadsContainer.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-brand-muted text-sm border border-brand-border">No client inquiries received yet. Submitted inquiries will appear here.</div>`;
+            } else {
+                leadsContainer.innerHTML = inquiries.map(inq => `
+                    <div class="bg-white p-6 rounded-2xl border border-brand-border space-y-4">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-brand-border gap-2">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-brand-gold/20 text-brand-gold px-2.5 py-1 rounded-full">${inq.eventType}</span>
+                                <h3 class="font-serif font-bold text-lg text-brand-charcoal mt-1">${inq.name}</h3>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <select onchange="updateInqStatus(${inq.id}, this.value)" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-card border border-brand-border">
+                                    <option value="New" ${inq.status === 'New' ? 'selected' : ''}>Status: New</option>
+                                    <option value="Contacted" ${inq.status === 'Contacted' ? 'selected' : ''}>Status: Contacted</option>
+                                    <option value="Booked" ${inq.status === 'Booked' ? 'selected' : ''}>Status: Booked</option>
+                                </select>
+                                <span class="text-xs text-brand-muted">${inq.createdAt}</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-brand-muted">
+                            <div><strong class="text-brand-charcoal">Email:</strong> ${inq.email}</div>
+                            <div><strong class="text-brand-charcoal">Phone:</strong> ${inq.phone}</div>
+                            <div><strong class="text-brand-charcoal">Event Date:</strong> ${inq.date}</div>
+                            <div><strong class="text-brand-charcoal">Guests:</strong> ${inq.guests}</div>
+                            <div><strong class="text-brand-charcoal">Budget:</strong> ${inq.budget}</div>
+                            <div><strong class="text-brand-charcoal">Venue:</strong> ${inq.venue}</div>
+                        </div>
+                        ${inq.notes ? `<div class="text-xs bg-brand-card p-3 rounded-xl"><strong class="text-brand-charcoal">Notes:</strong> ${inq.notes}</div>` : ''}
+                        ${inq.shortlist && inq.shortlist.length > 0 ? `
+                            <div class="pt-2">
+                                <span class="text-xs font-bold text-brand-charcoal block mb-1">Attached Shortlist (${inq.shortlist.length} items):</span>
+                                <div class="flex flex-wrap gap-2">
+                                    ${inq.shortlist.map(s => `<span class="bg-brand-bg px-2.5 py-1 rounded-lg text-xs border border-brand-border">${s.name} (x${s.qty})</span>`).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Portfolio CRUD Actions
+        function openPortfolioModal(id = null) {
+            document.getElementById('portfolio-form').reset();
+            document.getElementById('portfolio-id').value = '';
+            document.getElementById('portfolio-modal-title').textContent = 'Add New Project';
+            if (id) {
+                const item = portfolio.find(p => p.id === id);
+                if (item) {
+                    document.getElementById('portfolio-id').value = item.id;
+                    document.getElementById('p-title').value = item.title;
+                    document.getElementById('p-category').value = item.category;
+                    document.getElementById('p-image').value = item.image;
+                    document.getElementById('p-desc').value = item.desc;
+                    document.getElementById('portfolio-modal-title').textContent = 'Edit Project';
+                }
+            }
+            document.getElementById('admin-portfolio-modal').classList.remove('hidden');
+        }
+
+        function closePortfolioModal() {
+            document.getElementById('admin-portfolio-modal').classList.add('hidden');
+        }
+
+        function savePortfolioProject(event) {
+            event.preventDefault();
+            const id = document.getElementById('portfolio-id').value;
+            const data = {
+                id: id ? parseInt(id) : Date.now(),
+                title: document.getElementById('p-title').value,
+                category: document.getElementById('p-category').value,
+                image: document.getElementById('p-image').value,
+                desc: document.getElementById('p-desc').value
+            };
+
+            if (id) {
+                const idx = portfolio.findIndex(p => p.id === parseInt(id));
+                if (idx > -1) portfolio[idx] = data;
+                showToast('Portfolio project updated successfully!');
+            } else {
+                portfolio.unshift(data);
+                showToast('New portfolio project added successfully!');
+            }
+
+            setStore('portfolio', portfolio);
+            closePortfolioModal();
+            renderAdminData();
+            initApp();
+        }
+
+        function editPortfolioProject(id) {
+            openPortfolioModal(id);
+        }
+
+        function deletePortfolioProject(id) {
+            portfolio = portfolio.filter(p => p.id !== id);
+            setStore('portfolio', portfolio);
+            renderAdminData();
+            initApp();
+            showToast('Portfolio project deleted', 'error');
+        }
+
+        // Catalog CRUD Actions
+        function openCatalogModal(id = null) {
+            document.getElementById('catalog-form').reset();
+            document.getElementById('catalog-item-id').value = '';
+            document.getElementById('catalog-modal-title').textContent = 'Add Decor Item';
+            if (id) {
+                const item = catalog.find(c => c.id === id);
+                if (item) {
+                    document.getElementById('catalog-item-id').value = item.id;
+                    document.getElementById('c-name').value = item.name;
+                    document.getElementById('c-category').value = item.category;
+                    document.getElementById('c-price').value = item.price;
+                    document.getElementById('c-image').value = item.image;
+                    document.getElementById('c-desc').value = item.desc;
+                    document.getElementById('catalog-modal-title').textContent = 'Edit Decor Item';
+                }
+            }
+            document.getElementById('admin-catalog-modal').classList.remove('hidden');
+        }
+
+        function closeCatalogModal() {
+            document.getElementById('admin-catalog-modal').classList.add('hidden');
+        }
+
+        function saveCatalogItem(event) {
+            event.preventDefault();
+            const id = document.getElementById('catalog-item-id').value;
+            const data = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('c-name').value,
+                category: document.getElementById('c-category').value,
+                price: document.getElementById('c-price').value,
+                image: document.getElementById('c-image').value,
+                desc: document.getElementById('c-desc').value
+            };
+
+            if (id) {
+                const idx = catalog.findIndex(c => c.id === parseInt(id));
+                if (idx > -1) catalog[idx] = data;
+                showToast('Catalog item updated successfully!');
+            } else {
+                catalog.unshift(data);
+                showToast('New catalog item added successfully!');
+            }
+
+            setStore('catalog', catalog);
+            closeCatalogModal();
+            renderAdminData();
+            renderCatalog();
+        }
+
+        function editCatalogItem(id) {
+            openCatalogModal(id);
+        }
+
+        function deleteCatalogItem(id) {
+            catalog = catalog.filter(c => c.id !== id);
+            setStore('catalog', catalog);
+            renderAdminData();
+            renderCatalog();
+            showToast('Catalog item deleted', 'error');
+        }
+
+        function editService(id) {
+            const service = services.find(s => s.id === id);
+            if (!service) return;
+            const newTitle = prompt("Update Service Title:", service.title);
+            if (newTitle) {
+                service.title = newTitle;
+                setStore('services', services);
+                renderAdminData();
+                initApp();
+                showToast('Service updated successfully!');
+            }
+        }
+
+        function openTestimonialModal() {
+            const name = prompt("Client Name:");
+            if (!name) return;
+            const event = prompt("Event description (e.g. Wedding, Udaipur):");
+            const quote = prompt("Testimonial quote:");
+            if (name && quote) {
+                testimonials.push({ id: Date.now(), name, event: event || 'Celebration', quote, rating: 5 });
+                setStore('testimonials', testimonials);
+                renderAdminData();
+                initApp();
+                showToast('Testimonial added successfully!');
+            }
+        }
+
+        function deleteTestimonial(id) {
+            testimonials = testimonials.filter(t => t.id !== id);
+            setStore('testimonials', testimonials);
+            renderAdminData();
+            initApp();
+            showToast('Testimonial removed', 'error');
+        }
+
+        function updateInqStatus(id, status) {
+            const inq = inquiries.find(i => i.id === id);
+            if (inq) {
+                inq.status = status;
+                setStore('inquiries', inquiries);
+                showToast(`Inquiry status updated to ${status}`);
+            }
+        }
+
+        // Initialize app on load
+        window.onload = function() {
+            initApp();
+        };
+    </script>
+</body>
+</html>
