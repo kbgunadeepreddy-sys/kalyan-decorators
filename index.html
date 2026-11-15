@@ -727,9 +727,29 @@
             </form>
         </div>
     </div>
+    <!-- Firebase App & Analytics SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA6R8Ek17iWM29BU1ED7wD2w86htLnk",
+    authDomain: "kalyan-decorators.firebaseapp.com",
+    projectId: "kalyan-decorators",
+    storageBucket: "kalyan-decorators.firebasestorage.app",
+    messagingSenderId: "579489792336",
+    appId: "1:579489792336:web:9e85df7a947d0eb6642c55",
+    measurementId: "G-J8JCHQJ9NL"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const analytics = firebase.analytics();
+</script>
+
 
     <!-- JavaScript Application Logic -->
-    <script type="module">
+    <script>
         // Default Data Store
         const defaultPortfolio = [
             { id: 1, title: "Royal Palace Mandap", category: "Weddings", image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", desc: "Traditional ivory and gold mandap adorned with 50,000 fresh tuberose and hanging crystal chandeliers." },
@@ -1517,6 +1537,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+
 
     </script>
 </body>
