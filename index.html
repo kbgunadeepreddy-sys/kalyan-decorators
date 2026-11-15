@@ -105,7 +105,7 @@
                 </button>
 
                 <!-- Admin CMS Toggle -->
-                <button onclick="switchView('admin')" class="hidden sm:flex items-center space-x-2 px-4 py-2 rounded-lg bg-brand-charcoal text-white hover:bg-brand-gold text-xs font-semibold tracking-wider uppercase transition-colors shadow-sm">
+                <button onclick="checkAdmin()" class="hidden sm:flex items-center space-x-2 px-4 py-2 rounded-lg bg-brand-charcoal text-white hover:bg-brand-gold text-xs font-semibold tracking-wider uppercase transition-colors shadow-sm">
                     <i class="fa-solid fa-shield-halved"></i>
                     <span>Admin CMS</span>
                 </button>
@@ -124,7 +124,7 @@
             <button onclick="switchView('gallery'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Gallery</button>
             <button onclick="switchView('catalog'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Decor Catalog</button>
             <button onclick="switchView('booking'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Plan Event</button>
-            <button onclick="switchView('admin'); toggleMobileMenu();" class="flex items-center space-x-2 w-full py-2.5 px-4 rounded bg-brand-charcoal text-white font-medium text-sm justify-center">
+            <button onclick="checkAdmin(); toggleMobileMenu();" class="flex items-center space-x-2 w-full py-2.5 px-4 rounded bg-brand-charcoal text-white font-medium text-sm justify-center">
                 <i class="fa-solid fa-shield-halved"></i>
                 <span>Admin CMS</span>
             </button>
@@ -1532,5 +1532,30 @@
   const analytics = getAnalytics(app);
 </script>
 <script src="//code.tidio.co/xthb6id6id8jozoon3mitvvgubndn68f.js" async></script>
+<!-- Update your existing ADMIN CMS button to call checkAdmin() -->
+<button onclick="checkAdmin()" class="your-existing-classes">
+  ADMIN CMS
+</button>
+
+<!-- Add this script right before the closing </body> tag -->
+<script>
+  function checkAdmin() {
+    // 1. Prompt the user for a password
+    const password = prompt("Enter Admin Password:");
+
+    // 2. Replace 'Kalyan@2026' with your desired secret password
+    if (password === "Kalyan@2026") {
+      // 3. Action to take if correct (e.g., redirect to your admin page or show hidden CMS)
+      window.location.href = "admin.html"; 
+      
+      // NOTE: If your CMS is a hidden modal/section on the same page instead of a separate file, 
+      // replace the line above with:
+      // document.getElementById('your-cms-modal-id').style.display = 'block';
+    } else if (password !== null) {
+      // 4. Alert if the user entered the wrong password
+      alert("Incorrect password! Access denied.");
+    }
+  }
+</script>
 </body>
 </html>
