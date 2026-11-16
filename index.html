@@ -64,6 +64,45 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+
+    <style>
+      /* Subtle premium motion layer */
+      @media (prefers-reduced-motion: no-preference) {
+        .view-section:not(.hidden) { animation: kd-page-in .55s cubic-bezier(.2,.75,.25,1) both; }
+        .view-section h1, .view-section h2 { animation: kd-rise .65s ease both; }
+        .view-section img { transition: transform .7s cubic-bezier(.2,.7,.2,1), filter .5s ease; }
+        .view-section img:hover { transform: scale(1.035); }
+        .view-section button, .view-section a { transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease; }
+        .view-section button:hover, .view-section a:hover { transform: translateY(-2px); }
+        .kd-reveal { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s ease; }
+        .kd-reveal.kd-visible { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes kd-page-in { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
+      @keyframes kd-rise { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const targets = document.querySelectorAll('.view-section > div > div, .view-section article, .view-section .grid > *');
+        targets.forEach(el => el.classList.add('kd-reveal'));
+        if (!('IntersectionObserver' in window)) { targets.forEach(el => el.classList.add('kd-visible')); return; }
+        const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+          if (entry.isIntersecting) { entry.target.classList.add('kd-visible'); observer.unobserve(entry.target); }
+        }), { threshold: 0.12 });
+        targets.forEach(el => observer.observe(el));
+      });
+    </script>
+
+
+    <style>
+      @keyframes kdFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+      .view-section:not(.hidden) { animation: kdFadeUp .45s ease-out both; }
+      .view-section img { transition: transform .45s ease, filter .45s ease; }
+      .view-section img:hover { transform: scale(1.025); }
+      button, a { transition: transform .2s ease, background-color .2s ease, color .2s ease; }
+      button:active { transform: scale(.98); }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+    </style>
 </head>
 <body class="bg-brand-bg text-brand-charcoal antialiased selection:bg-brand-gold selection:text-white">
 
@@ -96,18 +135,12 @@
                 <button onclick="switchView('booking')" class="nav-link text-sm font-medium tracking-wide text-brand-charcoal hover:text-brand-gold transition-colors pb-1 border-b-2 border-transparent" data-target="booking">Plan Event</button>
             </nav>
 
-            <!-- Right Actions: Shortlist Drawer & Admin Switch & Mobile Hamburger -->
+            <!-- Right Actions: Shortlist Drawer & Mobile Hamburger -->
             <div class="flex items-center space-x-4">
                 <!-- Shortlist Button -->
                 <button onclick="toggleShortlistDrawer()" class="relative p-2.5 rounded-full bg-brand-card hover:bg-brand-border text-brand-charcoal transition-colors" title="Event Shortlist">
                     <i class="fa-solid fa-basket-shopping text-lg"></i>
                     <span id="shortlist-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-brand-gold text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow">0</span>
-                </button>
-
-                <!-- Admin CMS Toggle -->
-                <button onclick="checkAdmin()" class="hidden sm:flex items-center space-x-2 px-4 py-2 rounded-lg bg-brand-charcoal text-white hover:bg-brand-gold text-xs font-semibold tracking-wider uppercase transition-colors shadow-sm">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>Admin CMS</span>
                 </button>
 
                 <!-- Mobile Menu Button -->
@@ -124,10 +157,6 @@
             <button onclick="switchView('gallery'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Gallery</button>
             <button onclick="switchView('catalog'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Decor Catalog</button>
             <button onclick="switchView('booking'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-brand-charcoal hover:text-brand-gold">Plan Event</button>
-            <button onclick="checkAdmin(); toggleMobileMenu();" class="flex items-center space-x-2 w-full py-2.5 px-4 rounded bg-brand-charcoal text-white font-medium text-sm justify-center">
-                <i class="fa-solid fa-shield-halved"></i>
-                <span>Admin CMS</span>
-            </button>
         </div>
     </header>
 
@@ -425,102 +454,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- ADMIN / CMS VIEW -->
-        <section id="view-admin" class="view-section hidden fade-in py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Admin Header & Security Check -->
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 pb-6 border-b border-brand-border gap-4">
-                    <div>
-                        <span class="text-xs font-bold tracking-[0.25em] text-brand-gold uppercase block mb-1">Content Management System</span>
-                        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal">Kalyan Decorators Admin Portal</h1>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <button onclick="resetDataToDefault()" class="px-4 py-2.5 rounded-xl bg-brand-card hover:bg-brand-border text-xs font-semibold tracking-wider text-brand-charcoal uppercase transition-colors">
-                            <i class="fa-solid fa-rotate-right mr-1"></i> Reset Default Data
-                        </button>
-                        <button onclick="switchView('home')" class="px-4 py-2.5 rounded-xl bg-brand-charcoal text-white text-xs font-semibold tracking-wider uppercase transition-colors">
-                            <i class="fa-solid fa-eye mr-1"></i> View Live Site
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Admin Tabs Navigation -->
-                <div class="flex flex-wrap gap-2 mb-8 border-b border-brand-border pb-4">
-                    <button onclick="switchAdminTab('portfolio')" class="admin-tab-btn active px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-charcoal text-white transition-colors">Portfolio Manager</button>
-                    <button onclick="switchAdminTab('catalog')" class="admin-tab-btn px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Catalog Manager</button>
-                    <button onclick="switchAdminTab('services')" class="admin-tab-btn px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors">Services & Reviews</button>
-                    <button onclick="switchAdminTab('leads')" class="admin-tab-btn px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors relative">
-                        Client Inquiries <span id="leads-count-badge" class="ml-1.5 bg-brand-gold text-white px-1.5 py-0.5 rounded-full text-[10px]">0</span>
-                    </button>
-                </div>
-
-                <!-- Admin Tab 1: Portfolio Manager -->
-                <div id="admin-tab-portfolio" class="admin-pane space-y-8">
-                    <div class="flex justify-between items-center bg-brand-card p-6 rounded-2xl border border-brand-border">
-                        <div>
-                            <h2 class="font-serif text-xl font-bold text-brand-charcoal">Manage Gallery Portfolio</h2>
-                            <p class="text-sm text-brand-muted">Add, edit, or remove projects displayed in the public gallery.</p>
-                        </div>
-                        <button onclick="openPortfolioModal()" class="px-5 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white text-xs font-semibold tracking-wider uppercase transition-colors shadow">
-                            <i class="fa-solid fa-plus mr-1"></i> Add New Project
-                        </button>
-                    </div>
-                    <div id="admin-portfolio-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Dynamically populated -->
-                    </div>
-                </div>
-
-                <!-- Admin Tab 2: Catalog Manager -->
-                <div id="admin-tab-catalog" class="admin-pane hidden space-y-8">
-                    <div class="flex justify-between items-center bg-brand-card p-6 rounded-2xl border border-brand-border">
-                        <div>
-                            <h2 class="font-serif text-xl font-bold text-brand-charcoal">Manage Decor Rental Catalog</h2>
-                            <p class="text-sm text-brand-muted">Add new rental items, update pricing, or remove old inventory.</p>
-                        </div>
-                        <button onclick="openCatalogModal()" class="px-5 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white text-xs font-semibold tracking-wider uppercase transition-colors shadow">
-                            <i class="fa-solid fa-plus mr-1"></i> Add Decor Item
-                        </button>
-                    </div>
-                    <div id="admin-catalog-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Dynamically populated -->
-                    </div>
-                </div>
-
-                <!-- Admin Tab 3: Services & Testimonials -->
-                <div id="admin-tab-services" class="admin-pane hidden space-y-12">
-                    <!-- Services Editor -->
-                    <div class="bg-brand-card p-6 rounded-2xl border border-brand-border">
-                        <h2 class="font-serif text-xl font-bold text-brand-charcoal mb-4">Manage Core Services</h2>
-                        <div id="admin-services-list" class="space-y-6">
-                            <!-- Dynamically populated -->
-                        </div>
-                    </div>
-
-                    <!-- Testimonials Editor -->
-                    <div class="bg-brand-card p-6 rounded-2xl border border-brand-border">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="font-serif text-xl font-bold text-brand-charcoal">Manage Client Testimonials</h2>
-                            <button onclick="openTestimonialModal()" class="px-4 py-2.5 rounded-xl bg-brand-gold text-white text-xs font-semibold uppercase">Add Testimonial</button>
-                        </div>
-                        <div id="admin-testimonials-list" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Dynamically populated -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Admin Tab 4: Leads & Inquiries -->
-                <div id="admin-tab-leads" class="admin-pane hidden space-y-6">
-                    <div class="bg-brand-card p-6 rounded-2xl border border-brand-border">
-                        <h2 class="font-serif text-xl font-bold text-brand-charcoal mb-2">Client Inquiry Leads</h2>
-                        <p class="text-sm text-brand-muted">Review incoming quote requests submitted by prospective clients.</p>
-                    </div>
-                    <div id="admin-leads-list" class="space-y-4">
-                        <!-- Dynamically populated -->
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- Footer -->
@@ -651,88 +584,21 @@
         </div>
     </div>
 
-    <!-- Admin Portfolio Modal (CRUD) -->
-    <div id="admin-portfolio-modal" class="fixed inset-0 z-50 bg-brand-charcoal/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border border-brand-border">
-            <h3 id="portfolio-modal-title" class="font-serif text-2xl font-bold text-brand-charcoal mb-6">Add New Project</h3>
-            <form id="portfolio-form" onsubmit="savePortfolioProject(event)" class="space-y-4">
-                <input type="hidden" id="portfolio-id">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Project Title</label>
-                    <input type="text" id="p-title" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Category</label>
-                    <select id="p-category" class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
-                        <option value="Weddings">Weddings</option>
-                        <option value="Birthdays">Birthdays</option>
-                        <option value="Stage Designs">Stage Designs</option>
-                        <option value="Floral">Floral</option>
-                        <option value="Entrances">Entrances</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Image URL (Unsplash or direct)</label>
-                    <input type="url" id="p-image" required placeholder="https://images.unsplash.com/..." class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Description</label>
-                    <textarea id="p-desc" rows="3" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm"></textarea>
-                </div>
-                <div class="flex space-x-4 pt-4">
-                    <button type="button" onclick="closePortfolioModal()" class="w-1/2 py-3 rounded-xl bg-brand-card text-brand-charcoal text-xs font-semibold uppercase">Cancel</button>
-                    <button type="submit" class="w-1/2 py-3 rounded-xl bg-brand-gold text-white text-xs font-semibold uppercase">Save Project</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Admin Catalog Modal (CRUD) -->
-    <div id="admin-catalog-modal" class="fixed inset-0 z-50 bg-brand-charcoal/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border border-brand-border">
-            <h3 id="catalog-modal-title" class="font-serif text-2xl font-bold text-brand-charcoal mb-6">Add Decor Item</h3>
-            <form id="catalog-form" onsubmit="saveCatalogItem(event)" class="space-y-4">
-                <input type="hidden" id="catalog-item-id">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Item Name</label>
-                    <input type="text" id="c-name" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Category</label>
-                    <select id="c-category" class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
-                        <option value="Backdrops & Arches">Backdrops & Arches</option>
-                        <option value="Seating & Lounge">Seating & Lounge</option>
-                        <option value="Tables & Linens">Tables & Linens</option>
-                        <option value="Floral Pieces">Floral Pieces</option>
-                        <option value="Lighting & Chandeliers">Lighting & Chandeliers</option>
-                        <option value="Stage Props">Stage Props</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Price (e.g. ₹25,000 or Request price)</label>
-                    <input type="text" id="c-price" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Image URL</label>
-                    <input type="url" id="c-image" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-charcoal mb-1">Description</label>
-                    <textarea id="c-desc" rows="3" required class="w-full px-4 py-3 rounded-xl bg-brand-bg border border-brand-border text-sm"></textarea>
-                </div>
-                <div class="flex space-x-4 pt-4">
-                    <button type="button" onclick="closeCatalogModal()" class="w-1/2 py-3 rounded-xl bg-brand-card text-brand-charcoal text-xs font-semibold uppercase">Cancel</button>
-                    <button type="submit" class="w-1/2 py-3 rounded-xl bg-brand-gold text-white text-xs font-semibold uppercase">Save Item</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <!-- Firebase App & Analytics SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
-
-
-
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAxeRXERx1TiWhZ98UiEDY5WGDJehXtLXo",
+        authDomain: "kalyan-decorators.firebaseapp.com",
+        projectId: "kalyan-decorators",
+        storageBucket: "kalyan-decorators.firebasestorage.app",
+        messagingSenderId: "579489792336",
+        appId: "1:579489792336:web:9e85df7a947db9eb642c55"
+      };
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
 
     <!-- JavaScript Application Logic -->
     <script>
@@ -851,9 +717,6 @@
             });
             window.switchView =switchView;
 
-            if (viewId === 'admin') {
-                renderAdminData();
-            }
         }
 
         function toggleMobileMenu() {
@@ -1160,343 +1023,44 @@
         }
 
         // Booking Form Submission
-        function handleInquirySubmit(event) {
+        async function handleInquirySubmit(event) {
             event.preventDefault();
+            const form = document.getElementById('inquiry-form');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton ? submitButton.innerHTML : '';
+            if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Sending request…'; }
             const newInquiry = {
-                id: Date.now(),
-                name: document.getElementById('client-name').value,
-                email: document.getElementById('client-email').value,
-                phone: document.getElementById('client-phone').value,
+                name: document.getElementById('client-name').value.trim(),
+                email: document.getElementById('client-email').value.trim(),
+                phone: document.getElementById('client-phone').value.trim(),
                 eventType: document.getElementById('client-event-type').value,
                 date: document.getElementById('client-date').value,
-                guests: document.getElementById('client-guests').value,
+                guests: Number(document.getElementById('client-guests').value),
                 budget: document.getElementById('client-budget').value,
-                venue: document.getElementById('client-venue').value,
-                notes: document.getElementById('client-notes').value,
-                shortlist: [...shortlist],
+                venue: document.getElementById('client-venue').value.trim(),
+                notes: document.getElementById('client-notes').value.trim(),
+                shortlist: shortlist.map(item => ({ id: item.id, name: item.name, price: item.price })),
                 status: 'New',
-                createdAt: new Date().toLocaleDateString()
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-
-            inquiries.unshift(newInquiry);
-            setStore('inquiries', inquiries);
-
-            // Reset form and shortlist
-            document.getElementById('inquiry-form').reset();
-            shortlist = [];
-            setStore('shortlist', shortlist);
-            updateShortlistUI();
-
-            // Show Success Modal
-            document.getElementById('success-modal').classList.remove('hidden');
+            try {
+                await db.collection('inquiries').add(newInquiry);
+                form.reset();
+                shortlist = [];
+                setStore('shortlist', shortlist);
+                updateShortlistUI();
+                document.getElementById('success-modal').classList.remove('hidden');
+            } catch (error) {
+                console.error('Inquiry submission failed:', error);
+                showToast('We could not send your request. Please try again or contact us directly.', 'error');
+            } finally {
+                if (submitButton) { submitButton.disabled = false; submitButton.innerHTML = originalText; }
+            }
         }
 
         function closeSuccessModal() {
             document.getElementById('success-modal').classList.add('hidden');
             switchView('home');
-        }
-
-        // Admin CMS Controller
-        function switchAdminTab(tabName) {
-            document.querySelectorAll('.admin-pane').forEach(pane => pane.classList.add('hidden'));
-            document.getElementById('admin-tab-' + tabName).classList.remove('hidden');
-
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-                if (btn.textContent.toLowerCase().includes(tabName.toLowerCase()) || (tabName === 'leads' && btn.textContent.toLowerCase().includes('inquiries'))) {
-                    btn.className = 'admin-tab-btn active px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-charcoal text-white transition-colors';
-                } else {
-                    btn.className = 'admin-tab-btn px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase bg-brand-card text-brand-charcoal hover:bg-brand-border transition-colors';
-                }
-            });
-            renderAdminData();
-        }
-
-        function renderAdminData() {
-            // Update Leads Badge
-            document.getElementById('leads-count-badge').textContent = inquiries.length;
-
-            // Render Admin Portfolio
-            const portfolioContainer = document.getElementById('admin-portfolio-list');
-            portfolioContainer.innerHTML = portfolio.map(p => `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-border flex flex-col justify-between">
-                    <div>
-                        <div class="h-40 overflow-hidden relative">
-                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover">
-                            <span class="absolute top-2 left-2 bg-brand-charcoal text-white text-[10px] font-semibold px-2 py-0.5 rounded">${p.category}</span>
-                        </div>
-                        <div class="p-4">
-                            <h4 class="font-serif font-bold text-base text-brand-charcoal mb-1">${p.title}</h4>
-                            <p class="text-brand-muted text-xs line-clamp-2">${p.desc}</p>
-                        </div>
-                    </div>
-                    <div class="p-4 pt-0 flex justify-end space-x-2">
-                        <button onclick="editPortfolioProject(${p.id})" class="px-3 py-1.5 rounded bg-brand-card text-brand-charcoal text-xs font-semibold">Edit</button>
-                        <button onclick="deletePortfolioProject(${p.id})" class="px-3 py-1.5 rounded bg-red-50 text-red-600 text-xs font-semibold">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-
-            // Render Admin Catalog
-            const catalogContainer = document.getElementById('admin-catalog-list');
-            catalogContainer.innerHTML = catalog.map(c => `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-border flex flex-col justify-between">
-                    <div>
-                        <div class="h-40 overflow-hidden relative">
-                            <img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover">
-                            <span class="absolute top-2 left-2 bg-brand-charcoal text-white text-[10px] font-semibold px-2 py-0.5 rounded">${c.category}</span>
-                        </div>
-                        <div class="p-4">
-                            <div class="flex justify-between items-center mb-1">
-                                <h4 class="font-serif font-bold text-base text-brand-charcoal">${c.name}</h4>
-                                <span class="text-brand-gold font-bold text-xs">${c.price}</span>
-                            </div>
-                            <p class="text-brand-muted text-xs line-clamp-2">${c.desc}</p>
-                        </div>
-                    </div>
-                    <div class="p-4 pt-0 flex justify-end space-x-2">
-                        <button onclick="editCatalogItem(${c.id})" class="px-3 py-1.5 rounded bg-brand-card text-brand-charcoal text-xs font-semibold">Edit</button>
-                        <button onclick="deleteCatalogItem(${c.id})" class="px-3 py-1.5 rounded bg-red-50 text-red-600 text-xs font-semibold">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-
-            // Render Admin Services
-            const servicesContainer = document.getElementById('admin-services-list');
-            servicesContainer.innerHTML = services.map(s => `
-                <div class="p-4 bg-white rounded-xl border border-brand-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div class="flex items-center space-x-4">
-                        <img src="${s.image}" alt="${s.title}" class="w-16 h-16 object-cover rounded-lg">
-                        <div>
-                            <h4 class="font-serif font-bold text-base text-brand-charcoal">${s.title}</h4>
-                            <p class="text-brand-muted text-xs">${s.subtitle}</p>
-                        </div>
-                    </div>
-                    <button onclick="editService(${s.id})" class="px-4 py-2 rounded-lg bg-brand-card hover:bg-brand-border text-xs font-semibold">Edit Details</button>
-                </div>
-            `).join('');
-
-            // Render Admin Testimonials
-            const testContainer = document.getElementById('admin-testimonials-list');
-            testContainer.innerHTML = testimonials.map(t => `
-                <div class="bg-white p-4 rounded-xl border border-brand-border flex flex-col justify-between">
-                    <div>
-                        <h4 class="font-serif font-bold text-sm text-brand-charcoal">${t.name}</h4>
-                        <span class="text-[10px] text-brand-gold uppercase">${t.event}</span>
-                        <p class="text-xs text-brand-muted italic mt-2">"${t.quote}"</p>
-                    </div>
-                    <button onclick="deleteTestimonial(${t.id})" class="mt-4 text-red-600 text-xs font-semibold text-left">Remove</button>
-                </div>
-            `).join('');
-
-            // Render Admin Leads
-            const leadsContainer = document.getElementById('admin-leads-list');
-            if (inquiries.length === 0) {
-                leadsContainer.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-brand-muted text-sm border border-brand-border">No client inquiries received yet. Submitted inquiries will appear here.</div>`;
-            } else {
-                leadsContainer.innerHTML = inquiries.map(inq => `
-                    <div class="bg-white p-6 rounded-2xl border border-brand-border space-y-4">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-brand-border gap-2">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider bg-brand-gold/20 text-brand-gold px-2.5 py-1 rounded-full">${inq.eventType}</span>
-                                <h3 class="font-serif font-bold text-lg text-brand-charcoal mt-1">${inq.name}</h3>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <select onchange="updateInqStatus(${inq.id}, this.value)" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-card border border-brand-border">
-                                    <option value="New" ${inq.status === 'New' ? 'selected' : ''}>Status: New</option>
-                                    <option value="Contacted" ${inq.status === 'Contacted' ? 'selected' : ''}>Status: Contacted</option>
-                                    <option value="Booked" ${inq.status === 'Booked' ? 'selected' : ''}>Status: Booked</option>
-                                </select>
-                                <span class="text-xs text-brand-muted">${inq.createdAt}</span>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-brand-muted">
-                            <div><strong class="text-brand-charcoal">Email:</strong> ${inq.email}</div>
-                            <div><strong class="text-brand-charcoal">Phone:</strong> ${inq.phone}</div>
-                            <div><strong class="text-brand-charcoal">Event Date:</strong> ${inq.date}</div>
-                            <div><strong class="text-brand-charcoal">Guests:</strong> ${inq.guests}</div>
-                            <div><strong class="text-brand-charcoal">Budget:</strong> ${inq.budget}</div>
-                            <div><strong class="text-brand-charcoal">Venue:</strong> ${inq.venue}</div>
-                        </div>
-                        ${inq.notes ? `<div class="text-xs bg-brand-card p-3 rounded-xl"><strong class="text-brand-charcoal">Notes:</strong> ${inq.notes}</div>` : ''}
-                        ${inq.shortlist && inq.shortlist.length > 0 ? `
-                            <div class="pt-2">
-                                <span class="text-xs font-bold text-brand-charcoal block mb-1">Attached Shortlist (${inq.shortlist.length} items):</span>
-                                <div class="flex flex-wrap gap-2">
-                                    ${inq.shortlist.map(s => `<span class="bg-brand-bg px-2.5 py-1 rounded-lg text-xs border border-brand-border">${s.name} (x${s.qty})</span>`).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Portfolio CRUD Actions
-        function openPortfolioModal(id = null) {
-            document.getElementById('portfolio-form').reset();
-            document.getElementById('portfolio-id').value = '';
-            document.getElementById('portfolio-modal-title').textContent = 'Add New Project';
-            if (id) {
-                const item = portfolio.find(p => p.id === id);
-                if (item) {
-                    document.getElementById('portfolio-id').value = item.id;
-                    document.getElementById('p-title').value = item.title;
-                    document.getElementById('p-category').value = item.category;
-                    document.getElementById('p-image').value = item.image;
-                    document.getElementById('p-desc').value = item.desc;
-                    document.getElementById('portfolio-modal-title').textContent = 'Edit Project';
-                }
-            }
-            document.getElementById('admin-portfolio-modal').classList.remove('hidden');
-        }
-
-        function closePortfolioModal() {
-            document.getElementById('admin-portfolio-modal').classList.add('hidden');
-        }
-
-        function savePortfolioProject(event) {
-            event.preventDefault();
-            const id = document.getElementById('portfolio-id').value;
-            const data = {
-                id: id ? parseInt(id) : Date.now(),
-                title: document.getElementById('p-title').value,
-                category: document.getElementById('p-category').value,
-                image: document.getElementById('p-image').value,
-                desc: document.getElementById('p-desc').value
-            };
-
-            if (id) {
-                const idx = portfolio.findIndex(p => p.id === parseInt(id));
-                if (idx > -1) portfolio[idx] = data;
-                showToast('Portfolio project updated successfully!');
-            } else {
-                portfolio.unshift(data);
-                showToast('New portfolio project added successfully!');
-            }
-
-            setStore('portfolio', portfolio);
-            closePortfolioModal();
-            renderAdminData();
-            initApp();
-        }
-
-        function editPortfolioProject(id) {
-            openPortfolioModal(id);
-        }
-
-        function deletePortfolioProject(id) {
-            portfolio = portfolio.filter(p => p.id !== id);
-            setStore('portfolio', portfolio);
-            renderAdminData();
-            initApp();
-            showToast('Portfolio project deleted', 'error');
-        }
-
-        // Catalog CRUD Actions
-        function openCatalogModal(id = null) {
-            document.getElementById('catalog-form').reset();
-            document.getElementById('catalog-item-id').value = '';
-            document.getElementById('catalog-modal-title').textContent = 'Add Decor Item';
-            if (id) {
-                const item = catalog.find(c => c.id === id);
-                if (item) {
-                    document.getElementById('catalog-item-id').value = item.id;
-                    document.getElementById('c-name').value = item.name;
-                    document.getElementById('c-category').value = item.category;
-                    document.getElementById('c-price').value = item.price;
-                    document.getElementById('c-image').value = item.image;
-                    document.getElementById('c-desc').value = item.desc;
-                    document.getElementById('catalog-modal-title').textContent = 'Edit Decor Item';
-                }
-            }
-            document.getElementById('admin-catalog-modal').classList.remove('hidden');
-        }
-
-        function closeCatalogModal() {
-            document.getElementById('admin-catalog-modal').classList.add('hidden');
-        }
-
-        function saveCatalogItem(event) {
-            event.preventDefault();
-            const id = document.getElementById('catalog-item-id').value;
-            const data = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('c-name').value,
-                category: document.getElementById('c-category').value,
-                price: document.getElementById('c-price').value,
-                image: document.getElementById('c-image').value,
-                desc: document.getElementById('c-desc').value
-            };
-
-            if (id) {
-                const idx = catalog.findIndex(c => c.id === parseInt(id));
-                if (idx > -1) catalog[idx] = data;
-                showToast('Catalog item updated successfully!');
-            } else {
-                catalog.unshift(data);
-                showToast('New catalog item added successfully!');
-            }
-
-            setStore('catalog', catalog);
-            closeCatalogModal();
-            renderAdminData();
-            renderCatalog();
-        }
-
-        function editCatalogItem(id) {
-            openCatalogModal(id);
-        }
-
-        function deleteCatalogItem(id) {
-            catalog = catalog.filter(c => c.id !== id);
-            setStore('catalog', catalog);
-            renderAdminData();
-            renderCatalog();
-            showToast('Catalog item deleted', 'error');
-        }
-
-        function editService(id) {
-            const service = services.find(s => s.id === id);
-            if (!service) return;
-            const newTitle = prompt("Update Service Title:", service.title);
-            if (newTitle) {
-                service.title = newTitle;
-                setStore('services', services);
-                renderAdminData();
-                initApp();
-                showToast('Service updated successfully!');
-            }
-        }
-
-        function openTestimonialModal() {
-            const name = prompt("Client Name:");
-            if (!name) return;
-            const event = prompt("Event description (e.g. Wedding, Udaipur):");
-            const quote = prompt("Testimonial quote:");
-            if (name && quote) {
-                testimonials.push({ id: Date.now(), name, event: event || 'Celebration', quote, rating: 5 });
-                setStore('testimonials', testimonials);
-                renderAdminData();
-                initApp();
-                showToast('Testimonial added successfully!');
-            }
-        }
-
-        function deleteTestimonial(id) {
-            testimonials = testimonials.filter(t => t.id !== id);
-            setStore('testimonials', testimonials);
-            renderAdminData();
-            initApp();
-            showToast('Testimonial removed', 'error');
-        }
-
-        function updateInqStatus(id, status) {
-            const inq = inquiries.find(i => i.id === id);
-            if (inq) {
-                inq.status = status;
-                setStore('inquiries', inquiries);
-                showToast(`Inquiry status updated to ${status}`);
-            }
         }
 
         // Initialize app on load
@@ -1505,54 +1069,6 @@
         };
     
     </script>
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAxeRXERx1TiWhZ98UiEDY5wGDJehXtLXo",
-    authDomain: "kalyan-decorators.firebaseapp.com",
-    projectId: "kalyan-decorators",
-    storageBucket: "kalyan-decorators.firebasestorage.app",
-    messagingSenderId: "579489792336",
-    appId: "1:579489792336:web:9e85df7a947db9eb642c55",
-    measurementId: "G-JBJCHQJ9NL"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
 <script src="//code.tidio.co/xthb6id6id8jozoon3mitvvgubndn68f.js" async></script>
-<!-- Update your existing ADMIN CMS button to call checkAdmin() -->
-<button onclick="checkAdmin()" class="your-existing-classes">
-  ADMIN CMS
-</button>
-
-<!-- Add this script right before the closing </body> tag -->
-<script type="module">
-  function checkAdmin() {
-    // 1. Prompt the user for a password
-    const password = prompt("Enter Admin Password:");
-
-    // 2. Replace 'Kalyan@2026' with your desired secret password
-    if (password === "Kalyan@2026") {
-        switchView('admin');
-      
-      
-      // NOTE: If your CMS is a hidden modal/section on the same page instead of a separate file, 
-      // replace the line above with:
-      // document.getElementById('your-cms-modal-id').style.display = 'block';
-    } else if (password !== null) {
-      // 4. Alert if the user entered the wrong password
-      alert("Incorrect password! Access denied.");
-    }
-  }
-</script>
 </body>
 </html>
