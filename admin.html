@@ -3,7 +3,16 @@
 <section id="login" class="max-w-md mx-auto bg-white rounded-2xl shadow p-7"><h2 class="text-xl font-semibold mb-2">Administrator sign in</h2><p class="text-sm text-stone-500 mb-5">This area is restricted to authorized business administrators.</p><form id="loginForm" class="space-y-3"><input id="email" type="email" required placeholder="Admin email" class="w-full border rounded-lg p-3"><input id="password" type="password" required placeholder="Password" class="w-full border rounded-lg p-3"><button class="w-full bg-stone-900 text-white rounded-lg p-3">Sign in</button></form><p id="loginError" class="text-sm text-red-700 mt-3" role="alert"></p></section>
 <section id="dashboard" class="hidden"><div class="flex flex-wrap justify-between items-center gap-3 mb-5"><div><h2 class="text-2xl font-semibold">Customer enquiries</h2><p class="text-sm text-stone-500">Private records stored in Firestore.</p></div><button id="logout" class="border rounded-lg px-4 py-2">Sign out</button></div><div id="status" class="text-sm text-stone-600 mb-4" aria-live="polite"></div><div id="leads" class="space-y-3"></div></section></main>
 <script>
-const firebaseConfig={apiKey:"AIzaSyAxeRXERx1TiWhZ98UiEDY5WGDJehXtLXo",authDomain:"kalyan-decorators.firebaseapp.com",projectId:"kalyan-decorators",storageBucket:"kalyan-decorators.firebasestorage.app",messagingSenderId:"579489792336",appId:"1:579489792336:web:9e85df7a947db9eb642c55"};
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC_xBOGExLfpVkVbx4vDnUg2MTv9z82Ys4",
+  authDomain: "kalyan-decorators.firebaseapp.com",
+  projectId: "kalyan-decorators",
+  storageBucket: "kalyan-decorators.firebasestorage.app",
+  messagingSenderId: "579489792336",
+  appId: "1:579489792336:web:5e5538d8b6375272642c55",
+  measurementId: "G-E94NVE123J"
+};
 if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);const auth=firebase.auth(),db=firebase.firestore();
 const login=document.getElementById('login'),dashboard=document.getElementById('dashboard'),err=document.getElementById('loginError');
 document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();err.textContent='Signing in…';try{await auth.signInWithEmailAndPassword(email.value.trim(),password.value)}catch(x){err.textContent='Sign-in failed. Check your credentials and Firebase Authentication setup.';}});
