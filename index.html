@@ -587,16 +587,17 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
     <script>
       // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAxeRXERx1TiWhZ98UiEDY5wGDJehXtLXo",
+  apiKey: "AIzaSyC_xBOGExLfpVkVbx4vDnUg2MTv9z82Ys4",
   authDomain: "kalyan-decorators.firebaseapp.com",
   projectId: "kalyan-decorators",
   storageBucket: "kalyan-decorators.firebasestorage.app",
   messagingSenderId: "579489792336",
-  appId: "1:579489792336:web:9e85df7a947db9eb642c55",
-  measurementId: "G-JBJCHQJ9NL"
+  appId: "1:579489792336:web:5e5538d8b6375272642c55",
+  measurementId: "G-E94NVE123J"
 };
       if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
@@ -1065,8 +1066,34 @@ const firebaseConfig = {
             switchView('home');
         }
 
+
+        // Load administrator-managed content before the first public render.
+        async function loadManagedWebsiteContent() {
+            try {
+                const [serviceSnap, gallerySnap, catalogSnap, homeSnap] = await Promise.all([
+                    db.collection('siteServices').orderBy('order').get(),
+                    db.collection('siteGallery').orderBy('order').get(),
+                    db.collection('siteCatalog').orderBy('order').get(),
+                    db.collection('siteSettings').doc('homepage').get()
+                ]);
+                if (!serviceSnap.empty) services = serviceSnap.docs.map(d => ({...d.data(), id: d.id}));
+                if (!gallerySnap.empty) portfolio = gallerySnap.docs.map(d => ({...d.data(), id: d.id}));
+                if (!catalogSnap.empty) catalog = catalogSnap.docs.map(d => ({...d.data(), id: d.id}));
+                if (homeSnap.exists) {
+                    const h = homeSnap.data();
+                    const heroTitle = document.querySelector('#home h1');
+                    if (heroTitle && h.heroTitle) heroTitle.textContent = h.heroTitle;
+                    const heroSub = document.querySelector('#home p');
+                    if (heroSub && h.heroSubtitle) heroSub.textContent = h.heroSubtitle;
+                }
+            } catch (e) {
+                console.warn('Managed content unavailable; showing built-in website content.', e);
+            }
+        }
+
         // Initialize app on load
-        window.onload = function() {
+        window.onload = async function() {
+            await loadManagedWebsiteContent();
             initApp();
         };
     
